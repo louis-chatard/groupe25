@@ -11,13 +11,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 // Call the OpenWeather API to get the weather for a given city
-public class OpenWeatherClient {
+public class WeatherComponent {
 
     String APIKey;
     String uri;
 
     // Constructor
-    public OpenWeatherClient() throws Exception {
+    public WeatherComponent() throws Exception {
         // read properties from a file
         InputStream input=getClass().getClassLoader().getResourceAsStream("application.properties");  
         Properties p=new Properties();  
@@ -56,7 +56,7 @@ public class OpenWeatherClient {
     }
 
     public static void main(String[] args) throws Exception {
-        OpenWeatherClient client=new OpenWeatherClient();
+        WeatherComponent client=new WeatherComponent();
         String result=client.getWeather("Nancy");
         JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
         System.out.println(result);

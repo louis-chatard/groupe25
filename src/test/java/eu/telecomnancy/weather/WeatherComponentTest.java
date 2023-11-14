@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-public class OpenWeatherClientTest {
+public class WeatherComponentTest {
     
     @Test
     public void testGetWeather() throws Exception {
-        OpenWeatherClient client = new OpenWeatherClient();
+        WeatherComponent client = new WeatherComponent();
         String response=client.getWeather("Lille");
         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
         assertEquals("Lille", jsonObject.get("name").getAsString());
@@ -18,7 +18,7 @@ public class OpenWeatherClientTest {
 
     @Test
     public void testGetWeather2() throws Exception {
-        OpenWeatherClient client = new OpenWeatherClient();
+        WeatherComponent client = new WeatherComponent();
         String response=client.getWeather("xxxx");
         assertEquals("404", response);
     }
