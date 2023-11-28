@@ -4,8 +4,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.ManyToOne;
+
+import org.springframework.stereotype.Component;
+
+import com.google.gson.JsonObject;
+
 import javax.persistence.Id;
 
+@Component
 @Entity
 public class WeatherData {
     @Id
@@ -28,9 +34,8 @@ public class WeatherData {
     public WeatherData() {
     }
 
-    public WeatherData(long id, City city, String country, double temperature, double humidity, double pressure,
+    public WeatherData(City city, String country, double temperature, double humidity, double pressure,
             double windSpeed, double windDirection, double cloudiness, double rain, double snow, long timestamp) {
-        this.id = id;
         this.city = city;
         this.temperature = temperature;
         this.humidity = humidity;
@@ -41,6 +46,28 @@ public class WeatherData {
         this.rain = rain;
         this.snow = snow;
         this.timestamp = timestamp;
+    }
+
+    public WeatherData(JsonObject response) {
+        this.timestamp = response.getAsJsonObject("dt").getAsLong();
+        this.city = new City(response);
+        this.temperature = (response.getAsJsonObject("main")).getAsJsonPrimitive("temp").getAsDouble();
+        this.humidity = (response.getAsJsonObject("main")).getAsJsonPrimitive("humidity").getAsDouble();
+        this.pressure = (response.getAsJsonObject("main")).getAsJsonPrimitive("pressure").getAsDouble();
+        this.windSpeed = (response.getAsJsonObject("wind")).getAsJsonPrimitive("speed").getAsDouble();
+        this.windDirection = (response.getAsJsonObject("wind")).getAsJsonPrimitive("deg").getAsDouble();
+        this.cloudiness = (response.getAsJsonObject("cloud")).getAsJsonPrimitive("all").getAsDouble();
+        try {
+            this.rain = (response.getAsJsonObject("snow")).getAsJsonPrimitive("1h").getAsDouble();
+        } finally {
+            this.rain = 0;
+            try {
+                this.snow = (response.getAsJsonObject("rain")).getAsJsonPrimitive("1h").getAsDouble();
+            } finally {
+                this.snow = 0;
+            }
+        }
+//        return new WeatherData(city, city.getCountry(), temperature, humidity, pressure, windSpeed, windDirection, cloudiness, rain, snow, timestamp);
     }
 
     public long getId() {
@@ -138,5 +165,4 @@ public class WeatherData {
                 + ", pressure=" + pressure + ", windSpeed=" + windSpeed + ", windDirection=" + windDirection
                 + ", cloudiness=" + cloudiness + ", rain=" + rain + ", snow=" + snow + ", timestamp=" + timestamp + "]";
     }
-    
 }

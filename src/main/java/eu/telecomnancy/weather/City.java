@@ -8,6 +8,8 @@ import javax.persistence.Id;
 
 import javax.persistence.OneToMany;
 
+import com.google.gson.JsonObject;
+
 @Entity
 public class City {
     @Id
@@ -24,12 +26,18 @@ public class City {
     public City() {
     }
     
-    public City(long id, String name, String country, double latitude, double longitude) {
-        this.id = id;
+    public City(String name, String country, double latitude, double longitude) {
         this.name = name;
         this.country = country;
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public City(JsonObject response) {
+        this.name = response.get("name").getAsString();
+        this.country = response.get("sys").getAsJsonObject().get("country").getAsString();
+        this.latitude = response.get("coord").getAsJsonObject().get("lat").getAsDouble();
+        this.longitude = response.get("coord").getAsJsonObject().get("lon").getAsDouble();
     }
 
     public long getId() {

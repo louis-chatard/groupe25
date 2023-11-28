@@ -55,12 +55,43 @@ public class WeatherComponent {
         return response.toString();
     }
 
+
+    // Get the weather for a given city
+    public JsonObject getWeatherJson(String city) throws Exception {
+        // make an http request to the OpenWeather API
+        URL url = new URL(uri+"?q="+city+"&appid="+APIKey+"&units=metric");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setRequestMethod("GET");
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("Accept", "application/json");
+        con.setDoOutput(true);
+        int responseCode = con.getResponseCode();
+        System.out.println("GET Response Code :: " + responseCode);
+        StringBuffer response = new StringBuffer();
+        if (responseCode == HttpURLConnection.HTTP_OK) { // success
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            String inputLine;
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+            // parse the response to JsonObject
+            JsonObject jsonResponse = new JsonParser().parse(response.toString()).getAsJsonObject();
+            return jsonResponse;
+        } else {
+            response=new StringBuffer(""+responseCode);
+        }
+        // return an empty JsonObject if there's an error
+        return new JsonObject();
+    }
+
     public static void main(String[] args) throws Exception {
         WeatherComponent client=new WeatherComponent();
         String result=client.getWeather("Nancy");
         JsonObject jsonObject = new JsonParser().parse(result).getAsJsonObject();
         System.out.println(result);
         System.out.println(jsonObject.get("main").getAsJsonObject().get("temp").getAsDouble());
-
     }
+
 }
